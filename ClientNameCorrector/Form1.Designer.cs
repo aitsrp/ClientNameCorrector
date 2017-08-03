@@ -67,6 +67,7 @@
             this.comboBoxClientList.Name = "comboBoxClientList";
             this.comboBoxClientList.Size = new System.Drawing.Size(264, 21);
             this.comboBoxClientList.TabIndex = 3;
+            this.comboBoxClientList.SelectedIndexChanged += new System.EventHandler(this.comboBoxClientList_SelectedIndexChanged);
             // 
             // labelInputClient
             // 
@@ -76,7 +77,6 @@
             this.labelInputClient.Size = new System.Drawing.Size(171, 13);
             this.labelInputClient.TabIndex = 4;
             this.labelInputClient.Text = "Type in the misspelled client name:";
-            this.labelInputClient.Click += new System.EventHandler(this.label1_Click);
             // 
             // labelClientList
             // 
@@ -147,7 +147,6 @@
             this.textBoxInputCountry.Name = "textBoxInputCountry";
             this.textBoxInputCountry.Size = new System.Drawing.Size(264, 20);
             this.textBoxInputCountry.TabIndex = 9;
-            this.textBoxInputCountry.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
             // 
             // buttonAddToClient
             // 

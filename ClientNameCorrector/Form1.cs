@@ -18,6 +18,10 @@ namespace ClientNameCorrector
         List<string> clientsInDB = new List<string>();
         string[] countriesArray;
         string[] clientsArray;
+        List<string> entriesInCountries = new List<string>();
+        List<string> entriesInClients = new List<string>();
+        string[] countriesEntriesArray;
+        string[] clientsEntriesArray;
 
         public Form1()
         {
@@ -26,9 +30,18 @@ namespace ClientNameCorrector
             comboBoxCountryList.Items.AddRange(ListItemsFromDB("wrongcountry"));
         }
 
-        private void label1_Click(object sender, EventArgs e)
+        private void comboBoxClientList_SelectedIndexChanged(object sender, EventArgs e)
         {
+            try
+            {
+                listBoxDBContents.Items.AddRange(ListEntriesPerItem("wrongclients", comboBoxClientList.SelectedItem.ToString()));
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("err");
+            }
 
+            Console.WriteLine(comboBoxClientList.SelectedItem.ToString());
         }
 
         public string[] ListItemsFromDB(string table)
@@ -60,7 +73,6 @@ namespace ClientNameCorrector
                         Console.WriteLine("Number of clients: " + clientsInDB.Count);//count the number of items in list
                     }
                     return clientsArray;
-                    break;
                 case "wrongcountry":
                     countriesInDB.Clear();
                     var countryCollection = db.GetCollection<BsonDocument>(table);
@@ -82,16 +94,62 @@ namespace ClientNameCorrector
                         Console.WriteLine("Number of countries: " + countriesInDB.Count);//count the number of items in list
                     }
                     return countriesArray;
-                    break;
                 default:
                     string[] a = {};
                     return a;
             }
         }
 
-        private void textBox1_TextChanged(object sender, EventArgs e)
+        public string[] ListEntriesPerItem (string table, string item)
         {
+            var connectionString = "mongodb://192.168.42.85:27017";
+            var client = new MongoClient(connectionString);
+            var db = client.GetDatabase("local");
+            var filter = new BsonDocument();
+            switch (table)
+            {
+                case "wrongclients":
+                    entriesInClients.Clear();
+                    var clientCollection = db.GetCollection<BsonDocument>(table);
+                    using (var cursor = clientCollection.Find(filter).ToCursor())
+                    {
+                        while (cursor.MoveNext())
+                        {
+                            foreach (var doc in cursor.Current)
+                            {
+                                try
+                                {
+                                    entriesInClients.Add(doc["name.entry"].ToString());
+                                    clientsEntriesArray = entriesInClients.ToArray();
+                                }
+                                catch (Exception ex)
+                                {
+                                    Console.WriteLine("error");
+                                }
 
+                            }
+                        }
+                    }
+                    return clientsEntriesArray;
+                case "wrongcountry":
+                    entriesInCountries.Clear();
+                    var countryCollection = db.GetCollection<BsonDocument>(table);
+                    using (var cursor = countryCollection.Find(filter).ToCursor())
+                    {
+                        while (cursor.MoveNext())
+                        {
+                            foreach (var doc in cursor.Current)
+                            {
+                                entriesInCountries.Add(doc["Name.entry"].ToString());
+                                countriesEntriesArray = entriesInCountries.ToArray();
+                            }
+                        }
+                    }
+                    return countriesEntriesArray;
+                default:
+                    string[] a = { };
+                    return a;
+            }
         }
     }
 }
