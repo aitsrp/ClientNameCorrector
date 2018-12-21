@@ -111,6 +111,8 @@ namespace ClientNameCorrector
                 case "wrongclients":
                     entriesInClients.Clear();
                     var clientCollection = db.GetCollection<BsonDocument>(table);
+                    var jsonQuery = "{'seniorstaff.name' : { $exists: true }}";
+                    BsonDocument docu = MongoDB.Bson.Serialization.BsonSerializer.Deserialize<BsonDocument>(jsonQuery);
                     using (var cursor = clientCollection.Find(filter).ToCursor())
                     {
                         while (cursor.MoveNext())
